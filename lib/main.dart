@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_345/core/app.dart';
 
-void main() =>
-    runApp(MaterialApp(debugShowCheckedModeBanner: false, home: HomePage()));
+
+void main() {
+  runApp(App());
+}
 
 class HomePage extends StatelessWidget {
   final List<Device> devices = [
@@ -31,7 +34,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Получаем размеры экрана
+    // Получаем размеры э
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -124,7 +127,7 @@ class DeviceGrid extends StatelessWidget {
             screenWidth * 0.45, // Максимальная ширина карточки — 45% экрана
         crossAxisSpacing: screenWidth * 0.04, // Отступ между столбцами
         mainAxisSpacing: screenWidth * 0.04, // Отступ между строками
-        childAspectRatio: 0.8, 
+        childAspectRatio: 0.8,
       ),
       itemCount: devices.length,
       itemBuilder: (context, index) {
