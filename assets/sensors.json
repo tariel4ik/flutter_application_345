@@ -1,0 +1,26 @@
+[
+	{
+		"id": 1,
+		"name": "DS18B20",
+		"type": "Temperature",
+		"unit": "C",
+		"state": "critic",
+		"value": 31.1
+	},
+	{
+		"id": 2,
+		"name": "DS18B20",
+		"type": "Temperature",
+		"unit": "C",
+		"state": "critic",
+		"value": 31.1
+	},
+	{
+		"id": 3,
+		"name": "DHT11",
+		"type": "Humidity",
+		"unit": "%",
+		"state": "critic",
+		"value": 31.1
+	}
+]
