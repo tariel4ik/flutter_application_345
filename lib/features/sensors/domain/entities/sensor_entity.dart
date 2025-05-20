@@ -15,32 +15,6 @@ class SensorEntity {
     required this.value,
   });
 
-  @override
-  String toString() {
-    return 'SensorEntity(id: $id, name: $name, type: $type, unit: $unit, state: $state, value: $value)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SensorEntity &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          type == other.type &&
-          unit == other.unit &&
-          state == other.state &&
-          value == other.value;
-
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      name.hashCode ^
-      type.hashCode ^
-      unit.hashCode ^
-      state.hashCode ^
-      value.hashCode;
-
   SensorEntity copyWith({
     int? id,
     String? name,
@@ -57,16 +31,10 @@ class SensorEntity {
       state: state ?? this.state,
       value: value ?? this.value,
     );
+  }  
+
+  @override
+  String toString() {
+    return 'SensorEntity(id: $id, name: $name, type: $type, unit: $unit, state: $state, value: $value)';
   }
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'type': type,
-    'unit': unit,
-    'state': state,
-    'value': value,
-  };
-
-  
 }

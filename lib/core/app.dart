@@ -15,13 +15,33 @@ class App extends StatelessWidget {
       routeInformationParser: AppRouter.router.routeInformationParser,
       routeInformationProvider: AppRouter.router.routeInformationProvider,
       routerDelegate: AppRouter.router.routerDelegate,
-      builder: (context, child) => MultiProvider(
-        providers: [ 
-          ChangeNotifierProvider<SensorProvider>(create: (_) => GetIt.I<SensorProvider>()..loadSensors())
-        ],
-        child: child,
-      ),
+      builder: (context, child) {
+        if (child == null) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return MultiProvider(
+            providers: [ 
+              ChangeNotifierProvider<SensorProvider>(create: (_) => GetIt.I<SensorProvider>()..loadSensors())
+            ],
+            child: Consumer<SensorProvider>(
+              builder: (_, value, __) {
+                print("UPDATE");
+                if (value.notifications.isNotEmpty) {
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) {
+                      final snackBar = SnackBar(
+                      content: Text("${value.notifications[0].state}, ${value.notifications[0].sensorId}, ${value.notifications[0].timestamp}"),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  );
+                }
+                return child;
+              }
+            ),
+          );
+        }
+      }
     );
-    
   }
 }

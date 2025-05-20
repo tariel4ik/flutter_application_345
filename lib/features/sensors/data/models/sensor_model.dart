@@ -42,13 +42,12 @@ class SensorModel {
 
   factory SensorModel.fromJson(Map<String, dynamic> json) {
     return SensorModel(
-      
       id: json['id'] as int,
       name: json['name'] as String,
       type: json['type'] as String,
       unit: json['unit'] as String,
       state: json['state'] as String,
-      value: json['value'] as double,
+      value: double.parse(json['value'].toString()) //json['value'] as double,
     );
   }
 }

@@ -10,7 +10,14 @@ Future<void> initDependencies() async {
     ..registerLazySingleton<SensorRepository>(() => SensorRepositoryImpl(getIt()))
     ..registerLazySingleton(() => GetSensorValuesUseCase(getIt()))
     ..registerLazySingleton(() => GetSensorsUseCase(getIt()))
-    ..registerLazySingleton(() => SensorProvider(getSensorsUseCase: getIt(), getSensorValuesUseCase: getIt()));
+    ..registerLazySingleton(() => GetNotificationsUseCase(getIt()))
+    ..registerLazySingleton(() => WatchNotificationsUseCase(getIt()))
+    ..registerLazySingleton(() => SensorProvider(
+      getSensorsUseCase: getIt(), 
+      getSensorValuesUseCase: getIt(),
+      getNotificationsUseCase: getIt(),
+      watchNotificationsUseCase: getIt(),
+    ));
 }
 
 void _setupDio() {

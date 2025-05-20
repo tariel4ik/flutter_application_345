@@ -10,18 +10,31 @@ class DeviceGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final baseWidth = 375.0; // Базовая ширина для масштабирования
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+
+    // Защита от нулевой или отрицательной ширины экрана
+    if (screenWidth <= 0) {
+      return const SizedBox.shrink(); // или другой fallback
+    }
+
+    final baseWidth = 375.0;
     final scaleFactor = screenWidth / baseWidth;
+
+    // Защита от NaN или неправильного масштабирования
+    if (scaleFactor.isNaN || scaleFactor <= 0) {
+      return const SizedBox.shrink();
+    }
+
+    final maxCrossAxisExtent = 180.0 * scaleFactor;
 
     return GridView.builder(
       padding: EdgeInsets.all(16.0 * scaleFactor),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 180.0 * scaleFactor,
+        maxCrossAxisExtent: maxCrossAxisExtent,
         crossAxisSpacing: 16.0 * scaleFactor,
         mainAxisSpacing: 16.0 * scaleFactor,
-        childAspectRatio:
-            0.7, // Уменьшаем соотношение, чтобы карточки были выше
+        childAspectRatio: 0.7, //0.85
       ),
       itemCount: devices.length,
       itemBuilder: (context, index) {
@@ -31,3 +44,4 @@ class DeviceGrid extends StatelessWidget {
     );
   }
 }
+

@@ -39,7 +39,12 @@ class HomePage extends StatelessWidget {
             height: screenHeight, // Полная высота экрана
             width: screenWidth, // Полная ширина экрана
             color: Colors.white,
-            child: DeviceGrid(devices: value.sensors),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await value.loadSensors();
+              },
+              child: DeviceGrid(devices: value.sensors),
+            ),
           );
         },
       ),

@@ -11,11 +11,6 @@ class SensorValueEntity {
     required this.timestamp,
   });
 
-  @override
-  String toString() {
-    return 'SensorValueEntity(id: $id, sensorId: $sensorId, value: $value, timestamp: $timestamp)';
-  }
-
   SensorValueEntity copyWith({
     String? id,
     int? sensorId,
@@ -28,5 +23,10 @@ class SensorValueEntity {
       value: value ?? this.value,
       timestamp: timestamp ?? this.timestamp,
     );
+  }
+
+  @override
+  String toString() {
+    return 'SensorValueEntity(id: $id, sensorId: $sensorId, value: $value, timestamp: $timestamp)';
   }
 }
