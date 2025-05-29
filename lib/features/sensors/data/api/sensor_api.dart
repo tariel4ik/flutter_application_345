@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import '../models/notification_model.dart';
 import '../models/sensor_model.dart';
 import '../models/sensor_value_model.dart';
+
 
 class SensorApi {
   final Dio _dio;
@@ -9,10 +13,18 @@ class SensorApi {
   SensorApi(this._dio);
   Future<List<SensorModel>> getSensors() async {
     try {
-      final response = await _dio.get('/sensors/');
-      return (response.data as List)
-          .map((item) => SensorModel.fromJson(item))
-          .toList();
+      final response = await _dio.get(
+        '/sensors/',
+        options: Options(responseType: ResponseType.plain),
+      );
+
+      dynamic raw = response.data;
+      if (raw is String) {
+        raw = jsonDecode(raw);
+      }
+      return (raw as List)
+        .map((item) => SensorModel.fromJson(item))
+        .toList();
     } catch (e) {
       throw Exception('Failed to load sensors: $e');
     }
@@ -20,39 +32,52 @@ class SensorApi {
 
   Future<List<SensorValueModel>> getSensorValues(int sensorId) async {
     try {
-      final response = await _dio.get('/values/$sensorId');
-      final values =
-          (response.data as List)
-              .map((item) => SensorValueModel.fromJson(item))
-              .toList();
-      return values;
+      final response = await _dio.get(
+        '/values/$sensorId',
+        options: Options(responseType: ResponseType.plain),
+      );
+
+      dynamic raw = response.data;
+      if (raw is String) {
+        raw = jsonDecode(raw);
+      }
+
+      return (raw as List)
+        .map((item) => SensorValueModel.fromJson(item))
+        .toList();
     } catch (e) {
       throw Exception('Failed to load sensor values: $e');
     }
   }
 
-  Future<List<NotificationModel>> fetchNotifications({
+  Future<List<NotificationModel>> getNotifications({
     DateTime? since,
   }) async {
     try {
       String? endpoint;
       if (since != null) {
-        endpoint = "'${since.toUtc().toIso8601String()}'";
+        endpoint = "'${since.toLocal().toIso8601String()}'";
       } else {
-        endpoint = "'${DateTime.now().toIso8601String()}'";
+        endpoint = "'${DateTime.now().toLocal().toIso8601String()}'";
       }
-      final resp = await _dio.get('/notifications/$endpoint');
+      final resp = await _dio.get(
+        '/notifications/$endpoint',
+        options: Options(responseType: ResponseType.plain),
+      );
 
-      final raw = resp.data;
+      dynamic raw = resp.data;
+      if (raw is String) {
+        raw = jsonDecode(raw);
+      }
+
       if (raw == null || raw is! List<dynamic> || raw.isEmpty) {
         return [];
       }
 
       return raw
-          .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+        .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
+        .toList();
     } catch (e) {
-      print(e);
       rethrow;
     }
   }
@@ -61,19 +86,35 @@ class SensorApi {
   Stream<List<NotificationModel>> watchNotifications({
     Duration interval = const Duration(seconds: 2),
   }) async* {
-    // DateTime? lastFetched;
     while (true) {
       try {
-        final items = await fetchNotifications(since: DateTime.now().subtract(interval));
+        final items = await getNotifications(since: DateTime.now().toLocal().subtract(interval));
+        final filtered = items
+          .where((n) => n.state.toLowerCase() != 'normal')
+          .toList();
+        if (filtered.isNotEmpty) {
+          yield filtered;
+        }
+        debugPrint("Update notifications");
+      } catch (e) {
+        debugPrint('Error polling notifications: $e');
+      }
+      await Future.delayed(interval);
+    }
+  }
+
+  Stream<List<SensorModel>> watchSensors({
+    Duration interval = const Duration(seconds: 2),
+  }) async* {
+    while (true) {
+      try {
+        final items = await getSensors();
         if (items.isNotEmpty) {
-          // lastFetched = items
-          //     .map((i) => i.timestamp)
-          //     .reduce((a, b) => a.isAfter(b) ? a : b);
-          // lastFetched = DateTime.now();
           yield items;
         }
+        debugPrint("Update sensors");
       } catch (e) {
-        print('Error polling notifications: $e');
+        debugPrint('Error polling sensors data: $e');
       }
       await Future.delayed(interval);
     }

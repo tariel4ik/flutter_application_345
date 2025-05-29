@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_345/features/sensors/domain/entities/sensor_entity.dart';
 
+import '../../domain/entities/sensor_entity.dart';
 import 'device_card.dart';
+
 
 class DeviceGrid extends StatelessWidget {
   final List<SensorEntity> devices;
@@ -13,15 +14,13 @@ class DeviceGrid extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
 
-    // Защита от нулевой или отрицательной ширины экрана
     if (screenWidth <= 0) {
-      return const SizedBox.shrink(); // или другой fallback
+      return const SizedBox.shrink();
     }
 
     final baseWidth = 375.0;
     final scaleFactor = screenWidth / baseWidth;
 
-    // Защита от NaN или неправильного масштабирования
     if (scaleFactor.isNaN || scaleFactor <= 0) {
       return const SizedBox.shrink();
     }

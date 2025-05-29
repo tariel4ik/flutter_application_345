@@ -1,37 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_345/features/sensors/domain/entities/sensor_entity.dart';
-import 'package:flutter_application_345/features/sensors/presentation/pages/sensor_details_bottom_sheet.dart';
-import 'package:flutter_application_345/features/sensors/presentation/providers/sensor_provider.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+
+import '../../domain/entities/sensor_entity.dart';
+import '../pages/sensor_details_bottom_sheet.dart';
+import '../providers/sensors_provider.dart';
 
 class DeviceCard extends StatelessWidget {
   final SensorEntity sensor;
 
   const DeviceCard({super.key, required this.sensor});
 
-  void _showDeviceDetails(BuildContext context, SensorEntity sensor) async {
+  void _showDeviceDetails(BuildContext context, SensorEntity sensor) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final sensorProvider = GetIt.I<SensorProvider>();
-    await sensorProvider.loadSensorValues(sensor.id);
-    if(context.mounted) {
-      showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: Colors.white,
-        context: context,
-        builder: (context) {
-          return FractionallySizedBox(
-            heightFactor: 0.9,
-            child: SensorDetailsBottomSheet(sensor: sensor),
-          );
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(screenWidth * 0.05),
-          ),
+    final sensorProvider = GetIt.I<SensorsProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await sensorProvider.loadSensorValues(sensor.id);
+    });
+
+    showModalBottomSheet(
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(screenWidth * 0.05),
         ),
-      );
-    }
+      ),
+      builder: (context) {
+        return FractionallySizedBox(
+          heightFactor: 0.9,
+          child: Consumer<SensorsProvider>(
+            builder: (context, provider, child) {
+              if (provider.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator()
+                );
+              } else if (provider.sensorValues.isEmpty) {
+                return const Center(
+                  child: Text("EMPTY!")
+                );
+              }
+              
+              return SensorDetailsBottomSheet(sensor: sensor);
+            }
+          ),
+        );
+      },
+    );
   }
 
   @override

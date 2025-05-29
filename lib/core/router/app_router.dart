@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_345/features/sensors/presentation/pages/home.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/sensors/presentation/pages/home.dart';
+
 
 class AppRouter {
   static late GoRouter _router;
@@ -18,7 +20,6 @@ class AppRouter {
         GoRoute(
           name: "home_page",
           path: "/home_page",
-          builder: (context, state) => HomePage(),
           pageBuilder: (_, home) {
             return CustomTransitionPage(
               key: home.pageKey,

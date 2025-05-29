@@ -7,15 +7,23 @@ Future<void> initDependencies() async {
   _setupDio();
   getIt
     ..registerLazySingleton(() => SensorApi(getIt()))
+
     ..registerLazySingleton<SensorRepository>(() => SensorRepositoryImpl(getIt()))
-    ..registerLazySingleton(() => GetSensorValuesUseCase(getIt()))
+    
     ..registerLazySingleton(() => GetSensorsUseCase(getIt()))
+    ..registerLazySingleton(() => GetSensorValuesUseCase(getIt()))
     ..registerLazySingleton(() => GetNotificationsUseCase(getIt()))
+
+    ..registerLazySingleton(() => WatchSensorsUseCase(getIt()))
     ..registerLazySingleton(() => WatchNotificationsUseCase(getIt()))
-    ..registerLazySingleton(() => SensorProvider(
+    
+    ..registerLazySingleton(() => SensorsProvider(
       getSensorsUseCase: getIt(), 
       getSensorValuesUseCase: getIt(),
-      getNotificationsUseCase: getIt(),
+      watchSensorsUseCase: getIt(),
+    ))
+    ..registerLazySingleton(() => NotificationsProvider(
+      getNotificationsUseCase: getIt(), 
       watchNotificationsUseCase: getIt(),
     ));
 }

@@ -1,14 +1,16 @@
 import 'dart:async';
 
-import 'package:flutter_application_345/features/sensors/domain/entities/notification_entity.dart';
-import 'package:flutter_application_345/features/sensors/domain/entities/sensor_entity.dart';
-import 'package:flutter_application_345/features/sensors/domain/entities/sensor_value_entity.dart';
-import 'package:flutter_application_345/features/sensors/domain/repositories/sensor_repository.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/utils/exception_mapper.dart';
+import '../../domain/entities/notification_entity.dart';
+import '../../domain/entities/sensor_entity.dart';
+import '../../domain/entities/sensor_value_entity.dart';
+import '../../domain/repositories/sensor_repository.dart';
 import '../api/sensor_api.dart';
 import '../models/notification_model.dart';
+import '../models/sensor_model.dart';
+
 
 class SensorRepositoryImpl implements SensorRepository {
   final SensorApi api;
@@ -16,23 +18,25 @@ class SensorRepositoryImpl implements SensorRepository {
   SensorRepositoryImpl(this.api);
 
   @override
-  Future<List<SensorEntity>> getSensors() async {
-    final sensorModels = await api.getSensors();
-    return sensorModels
-        .map(
-          (model) => model.toEntity()
-        )
-        .toList();
+  Future<Either<Failure, List<SensorEntity>>> getSensors() async {
+    try {
+      final result = await api.getSensors();
+      return right(result.map((e) => e.toEntity()).toList());
+    } catch (e) {
+      return left(ExceptionMapper.from(e));
+    } 
   }
 
   @override
-  Future<List<SensorValueEntity>> getSensorValues(int sensorId) async {
-    final valueModels = await api.getSensorValues(sensorId);
-    return valueModels
-        .map(
-          (model) => model.toEntity()
-        )
-        .toList();
+  Future<Either<Failure, List<SensorValueEntity>>> getSensorValues({
+    required int sensorId
+  }) async {
+    try {
+      final result = await api.getSensorValues(sensorId);
+      return right(result.map((e) => e.toEntity()).toList());
+    } catch (e) {
+      return left(ExceptionMapper.from(e));
+    }
   }
 
   @override
@@ -40,7 +44,7 @@ class SensorRepositoryImpl implements SensorRepository {
     DateTime? since,
   }) async {
     try {
-      final result = await api.fetchNotifications(since: since);
+      final result = await api.getNotifications(since: since);
       return right(result.map((e) => e.toEntity()).toList());
     } catch (e) {
       return left(ExceptionMapper.from(e));
@@ -64,6 +68,22 @@ class SensorRepositoryImpl implements SensorRepository {
       ),
     );
   }
-
-
+  
+  @override
+  Stream<Either<Failure, List<SensorEntity>>> watchSensors() {
+    return api.watchSensors().transform(
+      StreamTransformer<
+        List<SensorModel>,
+        Either<Failure, List<SensorEntity>>
+      >.fromHandlers(
+        handleData: (items, sink) {
+          sink.add(right(items.map((e) => e.toEntity()).toList()));
+        },
+        handleError: (error, stack, sink) {
+          final failure = ExceptionMapper.from(error);
+          sink.add(left(failure));
+        },
+      ),
+    );
+  }
 }

@@ -1,4 +1,5 @@
-import 'package:flutter_application_345/features/sensors/domain/entities/sensor_value_entity.dart';
+import '../../domain/entities/sensor_value_entity.dart';
+
 
 class SensorValueModel {
   final String id;
