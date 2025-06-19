@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Датчики',
+          'Sensors',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: screenWidth * 0.06,

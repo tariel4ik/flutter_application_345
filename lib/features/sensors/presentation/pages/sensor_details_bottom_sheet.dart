@@ -35,7 +35,7 @@ class SensorDetailsBottomSheet extends StatelessWidget {
           ),
           SizedBox(height: screenWidth * 0.05),
           Text(
-            'Подробности датчика',
+            'Details sensor',
             style: TextStyle(
               color: Colors.black,
               fontSize: screenWidth * 0.045,
