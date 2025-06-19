@@ -94,7 +94,7 @@ class DeviceCard extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0 * scaleFactor),
                 Text(
-                  'state: ${sensor.state}',
+                  'состояние: ${sensor.state}',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14.0 * scaleFactor,
@@ -102,7 +102,7 @@ class DeviceCard extends StatelessWidget {
                 ),
                  SizedBox(height: 6.0 * scaleFactor),
                 Text(
-                  'value: ${sensor.value} ${sensor.unit}',
+                  'значение: ${sensor.value} ${sensor.unit}',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14.0 * scaleFactor,

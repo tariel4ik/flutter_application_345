@@ -24,7 +24,6 @@ class SensorDetailsBottomSheet extends StatelessWidget {
           Row(
             children: [
               Text(
-                // 'DS18B20',
                 sensor.name.toString(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -36,7 +35,7 @@ class SensorDetailsBottomSheet extends StatelessWidget {
           ),
           SizedBox(height: screenWidth * 0.05),
           Text(
-            'Details sensor',
+            'Подробности датчика',
             style: TextStyle(
               color: Colors.black,
               fontSize: screenWidth * 0.045,
